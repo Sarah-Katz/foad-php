@@ -16,15 +16,16 @@ class CharacterModel {
         $this->connection = new Database();
     }
     public function getAll() {
-        $query = $this->connection->getPdo()->prepare("SELECT id,class,race,name FROM chars");
+        $query = $this->connection->getPdo()->prepare("SELECT id,class,race,name, attack, defense FROM chars");
         $query->execute();
         return $query->fetchAll(PDO::FETCH_CLASS, "App\Models\Character");
     }
 
     public function getById($id) {
-        $query = $this->connection->getPdo()->prepare("SELECT id,class,race,name,attack,defense FROM chars WHERE id = :id");
+        $query = $this->connection->getPdo()->prepare("SELECT id,class,race,name, attack, defense FROM chars WHERE id = :id");
         $query->execute(array(":id" => $id));
-        return $query->fetch(PDO::FETCH_CLASS, "App\Models\Character");
+        $query->setFetchMode(PDO::FETCH_CLASS, "App\Models\Character");
+        return $query->fetch();
     }
 
     public function create($character) {
@@ -38,9 +39,11 @@ class CharacterModel {
         ]);
     }
 
-    public function update($character) {
-        $query = $this->connection->getPdo()->prepare('UPDATE chars SET race=:race, name=:name, attack=:attack, defense=:defense WHERE id=:id');
+    public function update($character, $id) {
+        $query = $this->connection->getPdo()->prepare('UPDATE chars SET class=:class, race=:race, name=:name, attack=:attack, defense=:defense WHERE id=:id');
         $query->execute([
+            'id' => $id,
+            'class' => $character['class'],
             'race' => $character['race'],
             'name' => $character['name'],
             'attack' => $character['attack'],

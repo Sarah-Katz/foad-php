@@ -24,8 +24,17 @@ class CharacterController {
 
     public function getEdit($id) {
         $character = $this->characterModel->getById($id);
-        $url = "../character/edit.php?id=$id";
-        header("Location: $url");
+        require_once 'Views/characters/edit.php';
+    }
+
+    public function getDetail($id) {
+        $character = $this->characterModel->getById($id);
+        require_once 'Views/characters/detail.php';
+    }
+
+    public function getRemove($id) {
+        $this->characterModel->delete($id);
+        header('Location: ../../character/index');
     }
 
     public function postCreate() {
@@ -35,5 +44,8 @@ class CharacterController {
     }
 
     public function postEdit($id) {
+        $character = $_POST;
+        $this->characterModel->update($character, $id);
+        header('Location: ../../character/index');
     }
 }
